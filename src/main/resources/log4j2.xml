@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Console for developers, rolling file for CI archives. %X{testName} ties each line to its test in parallel runs. -->
+<Configuration status="WARN">
+    <Properties>
+        <Property name="pattern">%d{HH:mm:ss.SSS} %-5level [%t] [%X{testName}] %c{1} - %msg%n</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="${pattern}"/>
+        </Console>
+        <RollingFile name="File" fileName="target/logs/qverse.log" filePattern="target/logs/qverse-%d{yyyy-MM-dd}-%i.log.gz">
+            <PatternLayout pattern="${pattern}"/>
+            <Policies>
+                <OnStartupTriggeringPolicy/>
+                <SizeBasedTriggeringPolicy size="20 MB"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.mounir.learn.qverse" level="INFO" additivity="false">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Logger>
+        <Logger name="io.github.bonigarcia" level="WARN"/>
+        <Logger name="org.openqa.selenium" level="WARN"/>
+        <Root level="WARN">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="File"/>
+        </Root>
+    </Loggers>
+</Configuration>

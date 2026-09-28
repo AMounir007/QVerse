@@ -1,0 +1,27 @@
+[
+  {
+    "name": "Locator / UI change",
+    "matchedStatuses": ["failed", "broken"],
+    "messageRegex": ".*(not found or not ready|NoSuchElement).*"
+  },
+  {
+    "name": "Synchronization / Timeout",
+    "matchedStatuses": ["failed", "broken"],
+    "traceRegex": ".*(TimeoutException|StaleElementReference).*"
+  },
+  {
+    "name": "Environment / Infrastructure",
+    "matchedStatuses": ["broken", "failed"],
+    "traceRegex": ".*(DriverInitializationException|ConnectException|SessionNotCreated).*"
+  },
+  {
+    "name": "API contract violation",
+    "matchedStatuses": ["failed"],
+    "messageRegex": ".*(status code|schema).*"
+  },
+  {
+    "name": "Product defect (assertion)",
+    "matchedStatuses": ["failed"],
+    "traceRegex": ".*AssertionError.*"
+  }
+]

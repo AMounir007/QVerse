@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!-- API tests are session-less, so they can run with high parallelism. -->
+<suite name="QVerse API" parallel="methods" thread-count="8">
+    <listeners>
+        <listener class-name="com.mounir.learn.qverse.testng.QVerseListener"/>
+    </listeners>
+    <test name="API">
+        <packages><package name="com.mounir.learn.qverse.examples.api"/></packages>
+    </test>
+</suite>

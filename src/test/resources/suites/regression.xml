@@ -1,0 +1,13 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!-- Full regression: Web + API in parallel (methods), one isolated session per thread. -->
+<suite name="QVerse Regression" parallel="methods" thread-count="4" data-provider-thread-count="4">
+    <listeners>
+        <listener class-name="com.mounir.learn.qverse.testng.QVerseListener"/>
+    </listeners>
+    <test name="Web">
+        <packages><package name="com.mounir.learn.qverse.examples.web"/></packages>
+    </test>
+    <test name="API">
+        <packages><package name="com.mounir.learn.qverse.examples.api"/></packages>
+    </test>
+</suite>

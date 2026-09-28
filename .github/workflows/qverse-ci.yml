@@ -1,0 +1,50 @@
+name: QVerse CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: "Maven suite profile (smoke, regression, web, api)"
+        default: "smoke"
+      env:
+        description: "Target environment (qa, staging, prod)"
+        default: "qa"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        browser: [ CHROME, FIREFOX ]
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "21"
+          cache: maven
+
+      - name: Run QVerse tests
+        run: >
+          mvn -B clean test
+          -P${{ github.event.inputs.env || 'qa' }},${{ github.event.inputs.suite || 'smoke' }},ci
+          -Dbrowser=${{ matrix.browser }}
+
+      - name: Generate Allure report
+        if: always()
+        run: mvn -B allure:report
+
+      - name: Upload reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: qverse-reports-${{ matrix.browser }}
+          path: |
+            target/site/allure-maven-plugin
+            target/qverse-dashboard
+            target/logs

@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  QVerse - Enterprise Automation Ecosystem
+  Architectural decisions:
+   * All versions are centralised as properties (single place to upgrade = low maintenance).
+   * Framework code lives in src/main (reusable, publishable as a library artifact);
+     project-specific tests live in src/test.
+   * Profiles select environment / suite / execution target so CI pipelines only pass -P flags.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.mounir.learn</groupId>
+    <artifactId>QVerse</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <name>QVerse Automation Ecosystem</name>
+    <description>Domain-independent, AI-ready automation ecosystem for Web, API and Mobile.</description>
+
+    <properties>
+        <java.version>21</java.version>
+        <maven.compiler.release>21</maven.compiler.release>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+
+        <!-- Dependency versions -->
+        <selenium.version>4.25.0</selenium.version>
+        <appium.version>9.3.0</appium.version>
+        <restassured.version>5.5.0</restassured.version>
+        <testng.version>7.10.2</testng.version>
+        <allure.version>2.29.0</allure.version>
+        <aspectj.version>1.9.22.1</aspectj.version>
+        <log4j.version>2.24.1</log4j.version>
+        <jackson.version>2.18.0</jackson.version>
+        <poi.version>5.3.0</poi.version>
+        <lombok.version>1.18.34</lombok.version>
+        <owner.version>1.0.12</owner.version>
+        <wdm.version>5.9.2</wdm.version>
+
+        <!-- Plugin versions -->
+        <compiler.plugin.version>3.13.0</compiler.plugin.version>
+        <surefire.plugin.version>3.5.1</surefire.plugin.version>
+        <allure.plugin.version>2.13.0</allure.plugin.version>
+
+        <!-- Runtime switches (override with -Dkey=value or profiles) -->
+        <suite>src/test/resources/suites/regression.xml</suite>
+        <env>qa</env>
+        <browser>CHROME</browser>
+        <headless>false</headless>
+        <execution.mode>LOCAL</execution.mode>
+        <threads>4</threads>
+        <allure.results.directory>${project.build.directory}/allure-results</allure.results.directory>
+    </properties>
+
+    <dependencies>
+        <!-- Web -->
+        <dependency>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-java</artifactId>
+            <version>${selenium.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.github.bonigarcia</groupId>
+            <artifactId>webdrivermanager</artifactId>
+            <version>${wdm.version}</version>
+        </dependency>
+        <!-- Mobile -->
+        <dependency>
+            <groupId>io.appium</groupId>
+            <artifactId>java-client</artifactId>
+            <version>${appium.version}</version>
+        </dependency>
+        <!-- API -->
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>rest-assured</artifactId>
+            <version>${restassured.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.rest-assured</groupId>
+            <artifactId>json-schema-validator</artifactId>
+            <version>${restassured.version}</version>
+        </dependency>
+        <!-- Test engine (compile scope: the framework ships BaseTest / listeners) -->
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <version>${testng.version}</version>
+        </dependency>
+        <!-- Reporting -->
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-testng</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.qameta.allure</groupId>
+            <artifactId>allure-rest-assured</artifactId>
+            <version>${allure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.aspectj</groupId>
+            <artifactId>aspectjweaver</artifactId>
+            <version>${aspectj.version}</version>
+        </dependency>
+        <!-- Logging -->
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-api</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-core</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.logging.log4j</groupId>
+            <artifactId>log4j-slf4j2-impl</artifactId>
+            <version>${log4j.version}</version>
+        </dependency>
+        <!-- Data -->
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.poi</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${poi.version}</version>
+        </dependency>
+        <!-- Configuration -->
+        <dependency>
+            <groupId>org.aeonbits.owner</groupId>
+            <artifactId>owner</artifactId>
+            <version>${owner.version}</version>
+        </dependency>
+        <!-- Boilerplate reduction -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>${lombok.version}</version>
+            <scope>provided</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${compiler.plugin.version}</version>
+                <configuration>
+                    <release>${java.version}</release>
+                    <parameters>true</parameters>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>${lombok.version}</version>
+                        </path>
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>${surefire.plugin.version}</version>
+                <configuration>
+                    <suiteXmlFiles>
+                        <suiteXmlFile>${suite}</suiteXmlFile>
+                    </suiteXmlFiles>
+                    <argLine>
+                        -javaagent:"${settings.localRepository}/org/aspectj/aspectjweaver/${aspectj.version}/aspectjweaver-${aspectj.version}.jar"
+                    </argLine>
+                    <properties>
+                        <property>
+                            <name>dataproviderthreadcount</name>
+                            <value>${threads}</value>
+                        </property>
+                    </properties>
+                    <systemPropertyVariables>
+                        <env>${env}</env>
+                        <browser>${browser}</browser>
+                        <headless>${headless}</headless>
+                        <execution.mode>${execution.mode}</execution.mode>
+                        <allure.results.directory>${allure.results.directory}</allure.results.directory>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>io.qameta.allure</groupId>
+                <artifactId>allure-maven</artifactId>
+                <version>${allure.plugin.version}</version>
+                <configuration>
+                    <reportVersion>2.30.0</reportVersion>
+                    <resultsDirectory>allure-results</resultsDirectory>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+    <profiles>
+        <!-- Environments -->
+        <profile><id>qa</id><properties><env>qa</env></properties></profile>
+        <profile><id>staging</id><properties><env>staging</env></properties></profile>
+        <profile><id>prod</id><properties><env>prod</env></properties></profile>
+
+        <!-- Suites -->
+        <profile><id>smoke</id><properties><suite>src/test/resources/suites/smoke.xml</suite></properties></profile>
+        <profile><id>regression</id><properties><suite>src/test/resources/suites/regression.xml</suite></properties></profile>
+        <profile><id>web</id><properties><suite>src/test/resources/suites/web.xml</suite></properties></profile>
+        <profile><id>api</id><properties><suite>src/test/resources/suites/api.xml</suite></properties></profile>
+        <profile><id>mobile</id><properties><suite>src/test/resources/suites/mobile.xml</suite></properties></profile>
+
+        <!-- Execution targets -->
+        <profile><id>headless</id><properties><headless>true</headless></properties></profile>
+        <profile><id>grid</id><properties><execution.mode>GRID</execution.mode><headless>true</headless></properties></profile>
+        <profile><id>cloud</id><properties><execution.mode>CLOUD</execution.mode></properties></profile>
+
+        <!-- CI: headless and more threads -->
+        <profile><id>ci</id><properties><headless>true</headless><threads>8</threads></properties></profile>
+    </profiles>
+</project>

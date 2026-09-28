@@ -1,0 +1,14 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!-- Smoke gate for every commit / deployment: only tests tagged groups = "smoke". -->
+<suite name="QVerse Smoke" parallel="methods" thread-count="4">
+    <listeners>
+        <listener class-name="com.mounir.learn.qverse.testng.QVerseListener"/>
+    </listeners>
+    <test name="Smoke">
+        <groups><run><include name="smoke"/></run></groups>
+        <packages>
+            <package name="com.mounir.learn.qverse.examples.web"/>
+            <package name="com.mounir.learn.qverse.examples.api"/>
+        </packages>
+    </test>
+</suite>

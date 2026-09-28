@@ -1,0 +1,10 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<!-- Mobile: one thread per available device. Increase thread-count with a device farm. -->
+<suite name="QVerse Mobile" parallel="methods" thread-count="1">
+    <listeners>
+        <listener class-name="com.mounir.learn.qverse.testng.QVerseListener"/>
+    </listeners>
+    <test name="Mobile">
+        <packages><package name="com.mounir.learn.qverse.examples.mobile"/></packages>
+    </test>
+</suite>

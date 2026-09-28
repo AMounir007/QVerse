@@ -38,5 +38,6 @@ build/
 .DS_Store
 ### QVerse ###
 .idea/workspace.xml
+.idea/vcs.xml
 allure-results/
 *.log

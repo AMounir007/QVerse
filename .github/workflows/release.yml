@@ -3,6 +3,12 @@ name: Release
 # Publishes a GitHub Release (shows in followers' feeds like SHAFT) when a tag like 1.0.2 is pushed.
 on:
   push:
+    branches:
+      - main
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/**'
     tags:
       - '[0-9]+.[0-9]+.[0-9]+*'
   workflow_dispatch:
@@ -33,6 +39,9 @@ jobs:
         id: v
         run: |
           VERSION="${{ github.event.inputs.version }}"
+          if [ -z "$VERSION" ] && [ "${{ github.ref_type }}" = "tag" ]; then
+            VERSION="${{ github.ref_name }}"
+          fi
           if [ -z "$VERSION" ]; then
             LAST=$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)
             [ -z "$LAST" ] && LAST="1.0.0"

@@ -31,3 +31,16 @@ Execution dashboard: `target/qverse-dashboard/index.html`
 
 ## Maven profiles
 `qa` `staging` `prod` · `smoke` `regression` `web` `api` `mobile` · `headless` `grid` `cloud` `ci`
+
+## Use QVerse in your project (JitPack)
+
+```xml
+<repositories>
+  <repository><id>jitpack.io</id><url>https://jitpack.io</url></repository>
+</repositories>
+<dependency>
+  <groupId>com.github.AMounir007</groupId>
+  <artifactId>QVerse</artifactId>
+  <version>1.0.0</version>
+</dependency>
+```

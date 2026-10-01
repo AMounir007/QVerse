@@ -5,10 +5,6 @@ on:
   push:
     branches:
       - main
-    paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/**'
     tags:
       - '[0-9]+.[0-9]+.[0-9]+*'
   workflow_dispatch:
@@ -41,6 +37,13 @@ jobs:
           VERSION="${{ github.event.inputs.version }}"
           if [ -z "$VERSION" ] && [ "${{ github.ref_type }}" = "tag" ]; then
             VERSION="${{ github.ref_name }}"
+          fi
+          # Pinned next version (file .release-version) wins if its tag doesn't exist yet
+          if [ -z "$VERSION" ] && [ -f .release-version ]; then
+            PIN=$(tr -d ' \r\n' < .release-version)
+            if [ -n "$PIN" ] && ! git rev-parse -q --verify "refs/tags/$PIN" >/dev/null; then
+              VERSION="$PIN"
+            fi
           fi
           if [ -z "$VERSION" ]; then
             LAST=$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)

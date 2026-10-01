@@ -14,7 +14,7 @@
 
     <groupId>com.mounir.learn</groupId>
     <artifactId>QVerse</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.5</version>
     <name>QVerse Automation Ecosystem</name>
     <description>Domain-independent, AI-ready automation ecosystem for Web, API and Mobile.</description>
 

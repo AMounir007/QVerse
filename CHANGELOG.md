@@ -3,7 +3,32 @@
 All notable changes to QVerse are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/) and [Semantic Versioning](https://semver.org/).
 
+## [1.0.5] — 2026-10-01
+
+### 🚀 Highlights
+Fully automated releases: every push to `main` publishes a GitHub Release (visible in followers' feeds) and warms up the JitPack build.
+
+### ✨ Added
+- GitHub Actions `Release` workflow (push to `main`, tag push, or manual run).
+- `.release-version` file to pin the next version; otherwise patch version auto-increments.
+- Release notes taken from `docs/RELEASE_NOTES_<version>.md` or this CHANGELOG.
+
+### ✅ Fixed
+- Built JAR and POM now carry the actual release version.
+
+### 📦 Installation
+```xml
+<dependency>
+  <groupId>com.github.AMounir007</groupId>
+  <artifactId>QVerse</artifactId>
+  <version>1.0.5</version>
+</dependency>
+```
+
+---
+
 ## [1.0.1] — 2026-10-01
+
 
 ### 🚀 Highlights
 First public, consumable release of QVerse via **JitPack** — build ✅ green.

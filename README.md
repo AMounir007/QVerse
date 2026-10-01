@@ -57,11 +57,22 @@ Then run `mvn clean install -U`.
 
 > Use `1.0.1` or later — `1.0.0` failed to build on JitPack (Maven 3.6.3 requirement) and is not usable.
 
-### Releasing a new version
-1. Commit & push changes to `main`.
-2. Create a tag: `git tag 1.0.2` then `git push origin 1.0.2`.
-3. On GitHub → **Releases → Draft a new release**, pick the tag, paste notes from [CHANGELOG.md](CHANGELOG.md).
-4. Open https://jitpack.io/#AMounir007/QVerse → click **Get it** next to the version to trigger the build.
+### Releasing a new version (automatic)
+Every push to `main` publishes a new GitHub Release and JitPack version with notes generated from your commit messages.
+Start each commit message with a prefix so it lands in the right section of the release notes:
+
+| Prefix | Section in release notes |
+|---|---|
+| `feat:` | ✨ New Features |
+| `fix:` | 🐛 Bug Fixes |
+| `perf:` / `refactor:` / `improve:` | ⚡ Improvements |
+| `test:` | 🧪 Tests |
+| `docs:` | 📚 Documentation |
+| `ci:` / `build:` / `chore:` | 🔧 Build & CI |
+
+Example: `git commit -m "fix: retry click on StaleElementReferenceException"`.
+To skip a release, add `[skip release]` to the commit message.
+For richer highlights, add `docs/RELEASE_NOTES_<version>.md` or a `## [<version>]` section in `CHANGELOG.md`.
 
 ## Release notes
 - Full history: [CHANGELOG.md](CHANGELOG.md)

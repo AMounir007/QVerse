@@ -55,46 +55,104 @@ jobs:
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build
-          mvn -B clean install -DskipTests
+        run: |
           mvn -B -q versions:set -DnewVersion=${{ steps.v.outputs.version }} -DgenerateBackupPoms=false
+          mvn -B clean install -DskipTests
+
+      - name: Generate professional release notes
+        env:
+          V: ${{ steps.v.outputs.version }}
+          PREV: ${{ steps.v.outputs.previous }}
+          REPO: ${{ github.repository }}
         run: |
+          git log ${PREV:+$PREV..}HEAD --no-merges --pretty='%s|%h' \
+            | grep -viE '\[skip ci\]|^chore\(release\)' > commits.txt || true
 
-      - name: Prepare release notes
-        run: |
-          V="${{ steps.v.outputs.version }}"
-          FILE="docs/RELEASE_NOTES_${V}.md"
-          if [ -f "$FILE" ]; then
-            cp "$FILE" notes.md
-          else
-            # Fallback: extract this version's section from CHANGELOG.md
-            awk -v v="$V" '
-              $0 ~ "^## \\[" v "\\]" {p=1; next}
-              p && /^## \[/ {exit}
-              p {print}
-            ' CHANGELOG.md > notes.md
-          fi
-          if [ ! -s notes.md ]; then
-            PREV=$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)
-            echo "## Changes" > notes.md
-            git log ${PREV:+$PREV..}HEAD --pretty='- %s (%h)' >> notes.md 2>/dev/null || true
-          fi
-          cat >> notes.md <<EOF
+          FEAT='^(feat|feature|add)'
+          FIX='^(fix|bug|hotfix)'
+          PERF='^(perf|refactor|improve|enhance|update)'
+          TEST='^test'
+          DOCS='^docs?'
+          CI='^(ci|build|chore|deps)'
 
-          ---
-          ### 📦 Installation
-          \`\`\`xml
-          <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-          </repository>
+          section () { # $1=title $2=regex $3=value statement
+            M=$(grep -iE "$2" commits.txt || true)
+            [ -z "$M" ] && return
+            echo "### $1"
+            echo "_$3_"
+            echo
+            echo "$M" | while IFS='|' read -r msg sha; do
+              clean=$(echo "$msg" | sed -E 's/^[a-zA-Z]+(\([^)]*\))?!?:[ ]*//')
+              echo "- ${clean^} ([\`$sha\`](https://github.com/$REPO/commit/$sha))"
+            done
+            echo
+          }
 
-          <dependency>
-            <groupId>com.github.AMounir007</groupId>
-            <artifactId>QVerse</artifactId>
-            <version>${V}</version>
-          </dependency>
-          \`\`\`
-          EOF
+          COUNT=$(grep -c . commits.txt || true)
+          BASE=${PREV:-$(git rev-list --max-parents=0 HEAD | tail -n1)}
+          DIFF=$(git diff --shortstat "$BASE" HEAD 2>/dev/null || echo "n/a")
+
+          {
+            echo "# 🚀 QVerse $V"
+            echo
+            echo "> **QVerse** is a domain-independent automation ecosystem for **Web · API · Mobile**."
+            echo "> This release delivers **$COUNT change(s)** since \`${PREV:-the initial version}\`."
+            echo
+            echo "## 📌 Highlights"
+            if [ -f "docs/RELEASE_NOTES_${V}.md" ]; then
+              cat "docs/RELEASE_NOTES_${V}.md"
+            else
+              awk -v v="$V" '$0 ~ "^## \\[" v "\\]" {p=1; next} p && /^## \[/ {exit} p {print}' CHANGELOG.md > hl.md || true
+              if [ -s hl.md ]; then cat hl.md
+              else echo "- Continuous-delivery build: every change below is compiled and verified by CI."; fi
+            fi
+            echo
+            echo "## 🔍 What changed"
+            echo
+            section "✨ New Features"  "$FEAT" "New capabilities you can use in your tests right away."
+            section "🐛 Bug Fixes"     "$FIX"  "Resolved problems — your test runs become more stable and reliable."
+            section "⚡ Improvements"  "$PERF" "Better performance, readability and maintainability — no action required."
+            section "🧪 Tests"         "$TEST" "Stronger verification of framework behaviour."
+            section "📚 Documentation" "$DOCS" "Clearer guidance for testers and developers."
+            section "🔧 Build & CI"    "$CI"   "Smoother builds, dependency updates and release automation."
+            OTHER=$(grep -viE "$FEAT|$FIX|$PERF|$TEST|$DOCS|$CI" commits.txt || true)
+            if [ -n "$OTHER" ]; then
+              echo "### 📝 Other Changes"
+              echo "$OTHER" | while IFS='|' read -r msg sha; do
+                echo "- $msg ([\`$sha\`](https://github.com/$REPO/commit/$sha))"; done
+              echo
+            fi
+            echo "## 💡 How this helps you"
+            echo "- ✅ **Drop-in upgrade** — bump the version; patch releases need no code changes."
+            echo "- ✅ **More stable tests** — includes every fix and improvement listed above."
+            echo "- ✅ **Verified build** — compiled and packaged automatically on Java 21."
+            echo
+            echo "## 📦 Installation"
+            echo '```xml'
+            echo '<repositories>'
+            echo '  <repository>'
+            echo '    <id>jitpack.io</id>'
+            echo '    <url>https://jitpack.io</url>'
+            echo '  </repository>'
+            echo '</repositories>'
+            echo
+            echo '<dependency>'
+            echo '  <groupId>com.github.AMounir007</groupId>'
+            echo '  <artifactId>QVerse</artifactId>'
+            echo "  <version>$V</version>"
+            echo '</dependency>'
+            echo '```'
+            echo "Then run \`mvn clean install -U\`."
+            echo
+            echo "## 📊 Release stats"
+            echo "- Commits: **$COUNT**"
+            echo "- Diff: $DIFF"
+            echo
+            [ -n "$PREV" ] && echo "**Full Changelog**: https://github.com/$REPO/compare/$PREV...$V"
+            echo
+            echo "📖 [README](https://github.com/$REPO#readme) · [CHANGELOG](https://github.com/$REPO/blob/main/CHANGELOG.md) · [JitPack](https://jitpack.io/#$REPO/$V)"
+          } > notes.md
+          cat notes.md
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2

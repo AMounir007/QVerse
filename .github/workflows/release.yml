@@ -53,9 +53,9 @@ jobs:
             ' CHANGELOG.md > notes.md
           fi
           if [ ! -s notes.md ]; then
-            PREV=$(git describe --tags --abbrev=0 "${V}^" 2>/dev/null || true)
+            PREV=$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)
             echo "## Changes" > notes.md
-            git log ${PREV:+$PREV..}"$V" --pretty='- %s (%h)' >> notes.md 2>/dev/null || true
+            git log ${PREV:+$PREV..}HEAD --pretty='- %s (%h)' >> notes.md 2>/dev/null || true
           fi
           cat >> notes.md <<EOF
 

@@ -34,13 +34,34 @@ Execution dashboard: `target/qverse-dashboard/index.html`
 
 ## Use QVerse in your project (JitPack)
 
+[![](https://jitpack.io/v/AMounir007/QVerse.svg)](https://jitpack.io/#AMounir007/QVerse)
+
+Add to your project's `pom.xml`:
 ```xml
 <repositories>
-  <repository><id>jitpack.io</id><url>https://jitpack.io</url></repository>
+  <repository>
+    <id>jitpack.io</id>
+    <url>https://jitpack.io</url>
+  </repository>
 </repositories>
-<dependency>
-  <groupId>com.github.AMounir007</groupId>
-  <artifactId>QVerse</artifactId>
-  <version>1.0.0</version>
-</dependency>
+
+<dependencies>
+  <dependency>
+    <groupId>com.github.AMounir007</groupId>
+    <artifactId>QVerse</artifactId>
+    <version>1.0.1</version>
+  </dependency>
+</dependencies>
 ```
+Then run `mvn clean install -U`.
+
+> Use `1.0.1` or later — `1.0.0` failed to build on JitPack (Maven 3.6.3 requirement) and is not usable.
+
+### Releasing a new version
+1. Commit & push changes to `main`.
+2. Create a tag: `git tag 1.0.2` then `git push origin 1.0.2`.
+3. On GitHub → **Releases → Draft a new release**, pick the tag, paste notes from [CHANGELOG.md](CHANGELOG.md).
+4. Open https://jitpack.io/#AMounir007/QVerse → click **Get it** next to the version to trigger the build.
+
+## Release notes
+See [CHANGELOG.md](CHANGELOG.md).

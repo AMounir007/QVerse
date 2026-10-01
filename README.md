@@ -64,4 +64,5 @@ Then run `mvn clean install -U`.
 4. Open https://jitpack.io/#AMounir007/QVerse → click **Get it** next to the version to trigger the build.
 
 ## Release notes
-See [CHANGELOG.md](CHANGELOG.md).
+- Full history: [CHANGELOG.md](CHANGELOG.md)
+- Latest: [QVerse 1.0.1](docs/RELEASE_NOTES_1.0.1.md) — ✅ available on JitPack

@@ -6,7 +6,8 @@ Format follows [Keep a Changelog](https://keepachangelog.com/) and [Semantic Ver
 ## [1.0.1] — 2026-10-01
 
 ### 🚀 Highlights
-First public, consumable release of QVerse via **JitPack**.
+First public, consumable release of QVerse via **JitPack** — build ✅ green.
+Details: [docs/RELEASE_NOTES_1.0.1.md](docs/RELEASE_NOTES_1.0.1.md)
 
 ### ✅ Fixed
 - JitPack build failure: `maven-compiler-plugin 3.13.0 requires Maven version 3.6.3`.

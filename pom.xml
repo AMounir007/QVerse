@@ -38,8 +38,8 @@
         <wdm.version>5.9.2</wdm.version>
 
         <!-- Plugin versions -->
-        <compiler.plugin.version>3.13.0</compiler.plugin.version>
-        <surefire.plugin.version>3.5.1</surefire.plugin.version>
+        <compiler.plugin.version>3.11.0</compiler.plugin.version>
+        <surefire.plugin.version>3.2.5</surefire.plugin.version>
         <allure.plugin.version>2.13.0</allure.plugin.version>
 
         <!-- Runtime switches (override with -Dkey=value or profiles) -->

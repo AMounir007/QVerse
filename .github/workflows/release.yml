@@ -32,7 +32,13 @@ jobs:
         id: v
         run: |
           VERSION="${{ github.event.inputs.version }}"
-          [ -z "$VERSION" ] && VERSION="${GITHUB_REF_NAME}"
+          if [ -z "$VERSION" ]; then
+            LAST=$(git tag --list '[0-9]*.[0-9]*.[0-9]*' --sort=-v:refname | head -n1)
+            [ -z "$LAST" ] && LAST="1.0.0"
+            IFS='.' read -r MA MI PA <<< "${LAST%%-*}"
+            VERSION="$MA.$MI.$((PA+1))"
+          fi
+          echo "Releasing $VERSION"
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
 
       - name: Build

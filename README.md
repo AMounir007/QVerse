@@ -1,6 +1,7 @@
 # QVerse — Enterprise Automation Ecosystem
 
 Domain-independent, AI-ready automation for **Web · API · Mobile** on Java 21, TestNG, Selenium, REST Assured, Appium and Allure.
+![image alt](https://github.com/AMounir007/QVerse/blob/65f7a5108f4b47ff96d0dc61451f8273b2894c71/QVerse.jpg)
 
 ```java
 LoginPage.open().enterUsername("admin").enterPassword("password").clickLogin();
